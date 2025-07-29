@@ -20,7 +20,7 @@ const CadastroTcc = () => {
 
       const trabalho = {
         nome: tema,
-        dataInicio: formatarDataParaDDMMYYYY(),//hoje
+        dataInicio: formatarDataParaDDMMYYYY(),
         siapeOrientador: siape,
         matriculaAluno: user.matricula,
         status: "EM_ANDAMENTO"
@@ -30,6 +30,7 @@ const CadastroTcc = () => {
       try {
         await criarTrabalhoAcademico(trabalho);
         notifySuccess();
+        navigate("/principalDoAluno");
 
       } catch (error) {
         notifyError();
