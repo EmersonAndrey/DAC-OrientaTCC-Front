@@ -4,7 +4,7 @@ const API_BASE_URL = "http://localhost:8080/pdf/";
 
 export async function criarPdf(pdfs) {
   const formData = new FormData();
-  pdfs.forEach(file => {//ADICIONEI isso  a essa funcao
+  pdfs.forEach(file => {
     formData.append("arquivos", file);
   });
 
