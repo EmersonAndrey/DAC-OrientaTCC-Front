@@ -57,6 +57,7 @@ const AdicionarTrabalhoDoTcc = () => {
                 }
 
                 setAtividade(atividadeEncontrada);
+                console.log(atividadeEncontrada)
 
                 if (atividadeEncontrada?.comentarios) {
                     setComentariosAnteriores(atividadeEncontrada.comentarios);
@@ -118,21 +119,30 @@ const AdicionarTrabalhoDoTcc = () => {
         navigate("/listaAtividadesAluno", { state: { tccSelecionado: tccSelecionado } });
     };
 
-    const handleAdicionarComentario = () => {
+    const handleAdicionarComentario = async () => {
         if (comentario.trim() === "") return;
 
-        setComentariosAnteriores(prev => [...prev, comentario]);
+        const novosComentarios = [...comentariosAnteriores, comentario];
+        setComentariosAnteriores(novosComentarios);
         setComentario("");
+
+        try {
+            await salvarAtividade(novosComentarios);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    const salvarAtividade = async () => {
+
+
+    const salvarAtividade = async (comentariosParaSalvar = comentariosAnteriores) => {
         const atividadeAtualizada = {
             ...atividade,
             idTrabalho: tccSelecionado.id,
             nome: atividade.nome,
             descricao: atividade.descricao,
             dataEntrega: formatarDataAtualizar(atividade.dataEntrega),
-            comentarios: comentariosAnteriores,
+            comentarios: comentariosParaSalvar,
             statusPdf: atividade.status,
             nomeAdicionouPdfs: user.nome
         };
@@ -272,7 +282,7 @@ const AdicionarTrabalhoDoTcc = () => {
                                     />
 
                                     <div className="text-end mt-2">
-                                        <Button variant="primary" onClick={handleAdicionarComentario}>Adicionar comentário</Button>
+                                        <Button variant="primary" onClick={() => handleAdicionarComentario()}>Adicionar comentário</Button>
                                     </div>
                                 </Form.Group>
                             </Card.Body>
