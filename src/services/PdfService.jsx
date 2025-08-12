@@ -17,27 +17,6 @@ export async function criarPdf(pdfs) {
   }
 }
 
-export async function baixarPdf(id) {
-  try {
-    const response = await axios.get(`${API_BASE_URL}arquivo/${id}`, { responseType: 'blob' }); // MODIFIQUEI aqui
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao baixar pdf:", error);
-    throw error;
-  }
-}
-
-export async function buscarPdfPorId(id) {
-  try {
-    const response = await axios.get(`${API_BASE_URL}${id}`);
-    return response.data;
-
-  } catch (error) {
-    console.error("Erro ao buscar pdf:", error);
-    throw error;
-  }
-}
-
 export async function deletarPdf(id) {
   try {
     const response = await axios.delete(`${API_BASE_URL}${id}`);

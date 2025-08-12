@@ -57,14 +57,3 @@ export async function buscarUmaAtividade(id) {
     throw error;
   }
 }
-
-export async function buscarTodasAtividades() {
-  try {
-    const response = await axios.get(`${API_BASE_URL}listarTodos`);
-    return response.data;
-
-  } catch (error) {
-    console.error("Erro ao buscar atividades:", error);
-    throw error;
-  }
-}

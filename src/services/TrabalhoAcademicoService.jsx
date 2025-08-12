@@ -24,17 +24,6 @@ export async function deletarTrabalhoAcademico(id) {
   }
 }
 
-export async function buscarTrabalhoAcademicoPorId(id) {
-  try {
-    const response = await axios.get(`${API_BASE_URL}${id}`);
-    return response.data;
-
-  } catch (error) {
-    console.error("Erro ao procurar trabalho:", error);
-    throw error;
-  }
-}
-
 export async function buscarTrabalhoAcademicoPorMatriculaAluno(matricula) {
   try {
     const response = await axios.get(`${API_BASE_URL}matricula/${matricula}`);
