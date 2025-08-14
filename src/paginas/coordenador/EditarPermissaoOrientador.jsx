@@ -4,8 +4,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { atualizarPermissaoOrientador } from '../../services/OrientadorService';
 import { BuscarUsuarioPorEmail } from '../../services/UsuarioService';
+import { useAppContext } from '../../context/AppContext';
 
 const EditarPermissaoOrientador = () => {
+
+    const {token} = useAppContext();
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -16,7 +19,7 @@ const EditarPermissaoOrientador = () => {
 
     const verificarRole = async (email) => {
         try {
-            const usuario = await BuscarUsuarioPorEmail(email);
+            const usuario = await BuscarUsuarioPorEmail(email, token);
             setPermissaoOriginal(usuario.tipoRole.toLowerCase());
         } catch (error) {
             console.error("Erro ao buscar role:", error);
@@ -56,12 +59,12 @@ const EditarPermissaoOrientador = () => {
     async function atualizacaoDoOrientador(e) {
         e.preventDefault();
         try {
-
+            console.log(token)
             const { permissao, ...orientadorSemPermissao } = orientador;
 
-            await atualizarPermissaoOrientador(orientadorSemPermissao);
+            await atualizarPermissaoOrientador(orientadorSemPermissao, token);
             notifySuccess();
-            navigate('/principalDoOrientador');
+            navigate('/listarOrientador');
 
         } catch (erro) {
             notifyError();
@@ -151,7 +154,7 @@ const EditarPermissaoOrientador = () => {
                         <Button
                             variant="secondary"
                             className="w-25"
-                            onClick={() => navigate("/principalDoOrientador")}
+                            onClick={() => navigate("/listarOrientador")}
                         >
                             Voltar
                         </Button>

@@ -17,9 +17,13 @@ export async function criarPdf(pdfs) {
   }
 }
 
-export async function deletarPdf(id) {
+export async function deletarPdf(id, tokenUsuario) {
   try {
-    const response = await axios.delete(`${API_BASE_URL}${id}`);
+    const response = await axios.delete(`${API_BASE_URL}${id}`, {
+      headers: {
+        Authorization: `Bearer ${tokenUsuario}`
+      }
+    });
     return response.data;
 
   } catch (error) {

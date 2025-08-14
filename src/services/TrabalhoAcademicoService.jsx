@@ -2,9 +2,13 @@ import axios from "axios";
 
 const API_BASE_URL = "http://localhost:8080/api/trabalhoAcademico/";
 
-export async function criarTrabalhoAcademico(trabalhoAcademico) {
+export async function criarTrabalhoAcademico(trabalhoAcademico, tokenUsuario) {
   try {
-    const response = await axios.post(`${API_BASE_URL}`, trabalhoAcademico);
+    const response = await axios.post(`${API_BASE_URL}`, trabalhoAcademico, {
+      headers: {
+        Authorization: `Bearer ${tokenUsuario}`
+      }
+    });
     return response.data;
 
   } catch (error) {
@@ -13,9 +17,13 @@ export async function criarTrabalhoAcademico(trabalhoAcademico) {
   }
 }
 
-export async function deletarTrabalhoAcademico(id) {
+export async function deletarTrabalhoAcademico(id, tokenUsuario) {
   try {
-    const response = await axios.delete(`${API_BASE_URL}${id}`);
+    const response = await axios.delete(`${API_BASE_URL}${id}`, {
+      headers: {
+        Authorization: `Bearer ${tokenUsuario}`
+      }
+    });
     return response.data;
 
   } catch (error) {
@@ -24,14 +32,18 @@ export async function deletarTrabalhoAcademico(id) {
   }
 }
 
-export async function buscarTrabalhoAcademicoPorMatriculaAluno(matricula) {
+export async function buscarTrabalhoAcademicoPorMatriculaAluno(matricula, tokenUsuario) {
   try {
-    const response = await axios.get(`${API_BASE_URL}matricula/${matricula}`);
+    const response = await axios.get(`${API_BASE_URL}matricula/${matricula}`, {
+      headers: {
+        Authorization: `Bearer ${tokenUsuario}`
+      }
+    });
     return response.data;
 
   } catch (error) {
     if (error.response?.data.status === 404) {
-      return null; 
+      return null;
     }
 
     console.error("Erro inesperado ao procurar trabalho do aluno:", error);
@@ -40,9 +52,13 @@ export async function buscarTrabalhoAcademicoPorMatriculaAluno(matricula) {
 
 }
 
-export async function buscarTrabalhoAcademicoPorSiapeOrientador(siape) {
+export async function buscarTrabalhoAcademicoPorSiapeOrientador(siape, tokenUsuario) {
   try {
-    const response = await axios.get(`${API_BASE_URL}siape/${siape}`);
+    const response = await axios.get(`${API_BASE_URL}siape/${siape}`, {
+      headers: {
+        Authorization: `Bearer ${tokenUsuario}`
+      }
+    });
     return response.data;
 
   } catch (error) {

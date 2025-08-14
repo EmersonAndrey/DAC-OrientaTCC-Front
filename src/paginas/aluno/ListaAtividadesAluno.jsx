@@ -12,12 +12,12 @@ const ListaAtividadesAluno = () => {
 
     const navigate = useNavigate();
 
-    const { user, setUser } = useAppContext();
+    const { user, setUser, token } = useAppContext();
     const [atividades, setAtividades] = useState([]);
 
     const buscarAtividadesDoTrabalho = async (id) => {
         try {
-            const atividadesEncontradas = await buscarAtividadesPorTrabalho(id);
+            const atividadesEncontradas = await buscarAtividadesPorTrabalho(id, token);
             console.log(atividadesEncontradas)
 
             setAtividades(atividadesEncontradas)
@@ -27,7 +27,7 @@ const ListaAtividadesAluno = () => {
     }
 
     useEffect(() => {
-        if (tccSelecionado?.id) {
+        if (tccSelecionado?.id && token) {
             buscarAtividadesDoTrabalho(tccSelecionado.id);
         }
     }, []);

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 const PrincipalDoOrientador = () => {
 
-    const { user } = useAppContext();
+    const { user, token } = useAppContext();
 
     const [tccs, setTccs] = useState([]);
     const [carregando, setCarregando] = useState(true);
@@ -22,10 +22,11 @@ const PrincipalDoOrientador = () => {
 
     const buscarTCCsDoOrientador = async () => {
         try {
-            const lista = await buscarTrabalhoAcademicoPorSiapeOrientador(user.siape);
+            const lista = await buscarTrabalhoAcademicoPorSiapeOrientador(user.siape, token);
             if (Array.isArray(lista)) {
                 setTccs(lista);
             }
+            console.log(lista)
         } catch (error) {
             console.error("Erro ao buscar trabalhos do orientador:", error.message);
         } finally {
@@ -69,29 +70,36 @@ const PrincipalDoOrientador = () => {
                                     trabalho.nome.toLowerCase().includes(filtro) ||
                                     trabalho.nomeAluno.toLowerCase().includes(filtro))
                                 .map((tcc) => (
-                                    <Card key={tcc.id} className="shadow-sm" style={{
-                                        backgroundColor: "#e6f4ff",
-                                        borderRadius: "10px",
-                                        padding: "15px",
-                                        width: "220px",
-                                        height: "200px"
-                                    }}>
-                                        <Card.Title style={{
-                                            fontWeight: 600,
-                                            fontSize: "1rem",
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical'
+                                    <Card
+                                        key={tcc.id}
+                                        className="shadow-sm"
+                                        style={{
+                                            backgroundColor: "#e6f4ff",
+                                            borderRadius: "10px",
+                                            padding: "15px",
+                                            width: "220px",
+                                            height: "220px"
                                         }}>
+                                        <Card.Title
+                                            style={{
+                                                fontWeight: 600,
+                                                fontSize: "1rem",
+                                                wordBreak: "break-word", 
+                                                whiteSpace: "normal"     
+                                            }}>
                                             {tcc.nome}
                                         </Card.Title>
-                                        <Card.Text><strong>Aluno:</strong> {tcc.nomeAluno}</Card.Text>
-                                        <Card.Text><strong>Data:</strong> {tcc.dataInicio}</Card.Text>
-                                        <Card.Text><strong>Status:</strong> {tcc.status}</Card.Text>
-                                        <div className="d-flex gap-2 mt-auto justify-content-end">
-                                            <Button variant="primary" onClick={() => rotaParaEntrarNaAtividadeOrientador(tcc)}>Acessar</Button>
+                                        <Card.Text style={{ marginBottom: "5px" }}><strong>Aluno:</strong> {tcc.nomeAluno}</Card.Text>
+                                        <Card.Text style={{ marginBottom: "5px" }}><strong>Data:</strong> {tcc.dataInicio}</Card.Text>
+                                        <Card.Text style={{ marginBottom: "10px" }}><strong>Status:</strong> {tcc.status}</Card.Text>
+                                        <div className="mt-auto d-flex justify-content-end">
+                                            <Button
+                                                variant="primary"
+                                                size="sm"
+                                                onClick={() => rotaParaEntrarNaAtividadeOrientador(tcc)}
+                                            >
+                                                Acessar
+                                            </Button>
                                         </div>
                                     </Card>
                                 ))}

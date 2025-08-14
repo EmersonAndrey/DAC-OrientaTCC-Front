@@ -11,7 +11,7 @@ import { deletarPdf } from "../../services/PdfService";
 
 const AdicionarTrabalhoDoTcc = () => {
 
-    const { user } = useAppContext();
+    const { user, token } = useAppContext();
 
     const { idAtividade } = useParams();
 
@@ -36,7 +36,7 @@ const AdicionarTrabalhoDoTcc = () => {
     useEffect(() => {
         async function fetchAtividade() {
             try {
-                const atividadeEncontrada = await buscarUmaAtividade(idAtividade);
+                const atividadeEncontrada = await buscarUmaAtividade(idAtividade, token);
 
                 if (atividadeEncontrada?.pdfs?.length) {
                     const arquivos = atividadeEncontrada.pdfs.map(pdf => ({
@@ -71,9 +71,8 @@ const AdicionarTrabalhoDoTcc = () => {
                 console.error("Erro ao buscar atividade:", error);
             }
         }
-
-        fetchAtividade();
-    }, [tccSelecionado]);
+        if(token) fetchAtividade();
+    }, [tccSelecionado, token]);
 
 
     const handleFileSelect = (event) => {
@@ -96,10 +95,10 @@ const AdicionarTrabalhoDoTcc = () => {
         }
 
         try {
-            await deletarPdf(pdf.id)
+            await deletarPdf(pdf.id, token)
             notifySuccess("Pdf excluido com sucesso");
         } catch (error) {
-            console.log(error.response)
+            console.log(error)
         }
     };
 
@@ -127,7 +126,7 @@ const AdicionarTrabalhoDoTcc = () => {
         setComentario("");
 
         try {
-            await salvarAtividade(novosComentarios);
+            await salvarAtividade(novosComentarios, token);
         } catch (error) {
             console.log(error);
         }
@@ -155,10 +154,10 @@ const AdicionarTrabalhoDoTcc = () => {
         });
         try {
 
-            const updated = await atualizarAtividade(idAtividade, formData, { headers: { tipoUser: "ALUNO" } });
+            const updated = await atualizarAtividade(idAtividade, formData, token);
 
             for (const pdfId of pdfsRemovidos) {
-                await deletarPdf(pdfId);
+                await deletarPdf(pdfId, token);
             }
 
             notifySuccess(`Atividade atualizada com sucesso!`);
@@ -215,7 +214,7 @@ const AdicionarTrabalhoDoTcc = () => {
 
     const todosPdfsParaRenderizar = [...pdfsUsuario, ...novosPdfs];
 
-    if (!user || !atividade) {
+    if (!user || !atividade || !token) {
         return (
             <Container className="d-flex justify-content-center align-items-center min-vh-100">
                 <p>Carregando usuário...</p>
@@ -265,7 +264,6 @@ const AdicionarTrabalhoDoTcc = () => {
                                                     <div key={index} className="d-flex justify-content-between align-items-center mb-2">
                                                         <span style={{ fontSize: "0.95rem" }}>{coment}</span>
                                                     </div>
-                                                    <hr style={{ border: "1px solid black", margin: "0 0 20px 0" }} />
                                                 </>
 
                                             ))}
@@ -300,7 +298,7 @@ const AdicionarTrabalhoDoTcc = () => {
                                     <div className="mt-3">
                                         <p><strong>Trabalhos enviados:</strong></p>
                                         {todosPdfsParaRenderizar.map((pdf) => (
-                                            <div key={pdf.id} className="d-flex align-items-center gap-2 justify-content-between">
+                                            <div key={pdf.id ?? pdf.nomeArquivo} className="d-flex align-items-center gap-2 justify-content-between">
                                                 <a
                                                     href={pdf.url}
                                                     target="_blank"
@@ -348,7 +346,7 @@ const AdicionarTrabalhoDoTcc = () => {
                                     <Button
                                         variant="primary"
                                         style={{ fontWeight: "bold", padding: "12px 0", fontSize: "1rem" }}
-                                        onClick={salvarAtividade}
+                                        onClick={() => salvarAtividade()}
                                     >
                                         Marcar como concluído
                                     </Button>

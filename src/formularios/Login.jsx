@@ -7,10 +7,11 @@ import { enviarEmailNovaSenha } from '../services/EmailService';
 import { toast } from 'react-toastify';
 import { BuscarUsuarioPorEmail } from '../services/UsuarioService';
 import { buscarOrientadorPorEmail } from '../services/OrientadorService';
+import { autenticarUsuario } from '../services/AutenticacaoService';
 
 const Login = () => {
 
-  const { setUser } = useAppContext()
+  const { setUser, setToken } = useAppContext()
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -25,7 +26,7 @@ const Login = () => {
 
   const notifySuccess = () => toast.success('Um email foi enviado com a nova senha', {
     position: "top-right",
-    autoClose: 3000, 
+    autoClose: 3000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -34,16 +35,16 @@ const Login = () => {
 
   const notifyErrorRecuperarSenha = () => toast.error('Usuário com email informado nao existe!', {
     position: "top-right",
-    autoClose: 3000, 
+    autoClose: 3000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
   });
 
-  const notifyErrorLogin = () => toast.error('Usuário com email informado nao existe!', {
+  const notifyErrorLogin = (msg) => toast.error(msg, {
     position: "top-right",
-    autoClose: 3000, 
+    autoClose: 3000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -59,17 +60,10 @@ const Login = () => {
     }
 
     try {
-      const usuario = await BuscarUsuarioPorEmail(emailRecuperacao);
-
-      if (usuario) {
-        await enviarEmailNovaSenha(emailRecuperacao, usuario.nome);
+        await enviarEmailNovaSenha(emailRecuperacao);
 
         notifySuccess();
-        handleClose();
-
-      } else {
-        notifyErrorRecuperarSenha("Usuário não encontrado com esse e-mail.");
-      }
+        handleClose();    
 
     } catch (error) {
       console.error("Erro na recuperação de senha:", error.message);
@@ -89,31 +83,33 @@ const Login = () => {
     if (email && senha) {
 
       try {
-        const usuario = await BuscarUsuarioPorEmail(email);
-        console.log(usuario)
+        const usuarioLogin = { email, senha }
+        const { token } = await autenticarUsuario(usuarioLogin);
+        setToken(token);
+        localStorage.setItem("token", token);
+
+        const usuario = await BuscarUsuarioPorEmail(email, token);
 
         if (usuario.tipoRole === "ALUNO") {
-          const aluno = await buscarAlunoPorEmail(email);
-
-          // Salvar no localStorage
-          localStorage.setItem("usuario", JSON.stringify(aluno));
+          const aluno = await buscarAlunoPorEmail(email, token);
 
           setUser(aluno);
+          localStorage.setItem("usuario", JSON.stringify(aluno));
           navigate("/principalDoAluno");
-          console.log(aluno);
 
         } else {
-          const orientador = await buscarOrientadorPorEmail(email);
-
-          // Salvar no localStorage
-          localStorage.setItem("usuario", JSON.stringify(orientador));
+          const orientador = await buscarOrientadorPorEmail(email, token);
 
           setUser(orientador);
+          localStorage.setItem("usuario", JSON.stringify(orientador));
           navigate("/principalDoOrientador");
-          console.log(orientador);
         }
+
+
+
       } catch (error) {
-        notifyErrorLogin();
+        notifyErrorLogin("Verifique suas informações de login");
+        console.log(error);
       }
     }
   }

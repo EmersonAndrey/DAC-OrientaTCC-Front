@@ -11,7 +11,7 @@ import { useAppContext } from "../../context/AppContext";
 const AtividadeOrientador = () => {
 
   const { idAtividade } = useParams();
-  const { user } = useAppContext()
+  const { user, token } = useAppContext()
 
   const location = useLocation();
   const { tccSelecionado } = location.state;
@@ -38,14 +38,14 @@ const AtividadeOrientador = () => {
   const [novosPdfs, setNovosPdfs] = useState([]);
   const [pdfsRemovidos, setPdfsRemovidos] = useState([]);
 
-  const [pdfsUsuario, setPdfsUsuario] = useState([]); 
-  const [pdfsRecebidos, setPdfsRecebidos] = useState([]); 
+  const [pdfsUsuario, setPdfsUsuario] = useState([]);
+  const [pdfsRecebidos, setPdfsRecebidos] = useState([]);
 
   useEffect(() => {
-    if (idAtividade) {
+    if (idAtividade && token) {
       fetchAtividade(idAtividade);
     }
-  }, [idAtividade]);
+  }, [idAtividade, token]);
 
   const handleVoltar = () => {
     navigate("/listaAtividadesOrientador", { state: { tccSelecionado: tccSelecionado } });
@@ -63,7 +63,7 @@ const AtividadeOrientador = () => {
 
   const fetchAtividade = async (id) => {
     try {
-      const data = await buscarUmaAtividade(id)
+      const data = await buscarUmaAtividade(id, token)
       setForm({
         nome: data.nome || "",
         descricao: data.descricao || "",
@@ -144,7 +144,7 @@ const AtividadeOrientador = () => {
     }
   };
 
-  const todosPdfsParaRenderizar = [...pdfsUsuario, ...novosPdfs]; 
+  const todosPdfsParaRenderizar = [...pdfsUsuario, ...novosPdfs];
 
   const getStatusTextColor = (status) => {
     switch (status) {
@@ -173,20 +173,20 @@ const AtividadeOrientador = () => {
 
     try {
       if (modoEdicao) {
-        await atualizarAtividade(idAtividade, formData, { headers: { tipoUser: "ORIENTADOR" } });
-        
+        await atualizarAtividade(idAtividade, formData, token);
+
         for (const pdfId of pdfsRemovidos) {
-          await deletarPdf(pdfId);
+          await deletarPdf(pdfId, token);
         }
 
       } else {
-        await criarAtividade(formData);
+        await criarAtividade(formData, token);
       }
 
       notifySuccess();
-      
+
       if (modoEdicao) {
-        const updated = await buscarUmaAtividade(idAtividade);
+        const updated = await buscarUmaAtividade(idAtividade, token);
         if (updated.pdfs?.length) {
           setPdfs(updated.pdfs.map(pdf => ({
             id: pdf.id,
@@ -359,7 +359,7 @@ const AtividadeOrientador = () => {
                         variant="link"
                         className="p-0 text-primary text-break"
                         style={{ maxWidth: "90%" }}
-                        onClick={() => window.open(pdf.url, "_blank")}
+                        onClick={() => window.open(pdf.url ?? URL.createObjectURL(pdf.file), "_blank")}
                       >
                         {pdf.nomeArquivo}
                       </Button>

@@ -6,8 +6,11 @@ import { buscarTodosAlunos, deletarAlunoPorEmail } from '../../services/AlunoSer
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { useAppContext } from '../../context/AppContext';
 
 const GerenciarAluno = () => {
+
+    const { token } = useAppContext();
 
     const navigate = useNavigate();
 
@@ -16,7 +19,7 @@ const GerenciarAluno = () => {
 
     const buscarAlunos = async () => {
         try {
-            const lista = await buscarTodosAlunos();
+            const lista = await buscarTodosAlunos(token);
             setListaAlunos(lista);
         } catch (error) {
             return
@@ -25,12 +28,13 @@ const GerenciarAluno = () => {
     }
 
     useEffect(() => {
+        if (!token) return
         buscarAlunos();
-    }, [])
+    }, [token])
 
     const deletarAluno = async (aluno) => {
         try {
-            await deletarAlunoPorEmail(aluno.email);
+            await deletarAlunoPorEmail(aluno.email, token);
             notifySuccess();
 
             buscarAlunos();
@@ -117,7 +121,7 @@ const GerenciarAluno = () => {
                     ) : (
                         <div
                             style={{
-                                maxHeight: "250px", 
+                                maxHeight: "250px",
                                 overflowY: "auto",
                                 paddingRight: "10px",
                             }}
