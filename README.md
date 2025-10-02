@@ -1,70 +1,107 @@
-# Getting Started with Create React App
+# 🎓 OrientaTCC Frontend — React + Bootstrap
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 📝 Descrição do Projeto
 
-## Available Scripts
+O OrientaTCC Frontend é a interface web do sistema OrientaTCC, um projeto desenvolvido para auxiliar alunos, orientadores e coordenadores na gestão de Trabalhos de Conclusão de Curso (TCC).
 
-In the project directory, you can run:
+O frontend foi construído em React, aplicando boas práticas de componentização, organização de serviços e consumo de APIs REST expostas pelo backend (Spring Boot).
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 📂 Estrutura do Projeto
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+O projeto segue uma organização modular para facilitar a manutenção e evolução.
 
-### `npm test`
+```shell
+DAC-OrientaTCC-Front/
+├── public/                     # Arquivos estáticos
+├── src/
+│   ├── componentes/            # Componentes reutilizáveis
+│   ├── paginas/                # Telas principais (Aluno, Orientador, Coordenador)
+│   ├── services/               # Serviços para chamadas de API (fetch/axios)
+│   ├── formularios/            # Componentes voltados para formulários
+│   ├── context/                # Context API para estados globais (ex: autenticação)
+│   ├── util/                   # Funções utilitárias
+│   ├── App.jsx                 # Componente principal
+│   └── main.jsx                # Ponto de entrada da aplicação
+├── index.html                  # Página inicial
+└── package.json                # Dependências e scripts`
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## ✨ Funcionalidades
+- [x] Autenticação e controle de acesso (aluno, orientador, coordenador)
+- [x] Cadastro e gerenciamento de **TCCs**
+- [x] Envio e visualização de **atividades** e **PDFs**
+- [x] Painel do aluno para acompanhar progresso
+- [x] Painel do orientador para acompanhar TCCs vinculados
+- [x] Integração com backend em Spring Boot via chamadas REST
+- [x] Interface responsiva com Bootstrap
+      
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🛠️ Tecnologias Utilizadas  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Frontend:** React 18   
+- **Estilização:** Bootstrap 5, CSS   
+- **Gerenciamento de estado:** React Context API  
+- **Consumo de API:** Axios
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
+      
+## 🚀 Como Rodar o Projeto  
 
-### `npm run eject`
+### 🔧 Pré-requisitos  
+- Node.js 18+  
+- npm ou yarn  
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### ▶️ Passo a Passo  
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+# Clone o repositório
+git clone https://github.com/EmersonAndrey/DAC-OrientaTCC-Front.git
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# Acesse a pasta do projeto
+cd DAC-OrientaTCC-Front
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Instale as dependências
+npm install
 
-## Learn More
+# Inicie a aplicação
+npm start
+```
+A aplicação ficará disponível em:
+👉 http://localhost:3000
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🔗 Integração com Backend
+O frontend se conecta ao backend OrientaTCC (Spring Boot), que expõe endpoints REST.
 
-### Code Splitting
+Exemplo de configuração no `services/AtividadeService.js:`
+```bash
+import axios from "axios";
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+const API_BASE_URL = "http://localhost:8080/api/trabalhoAcademico/";
 
-### Analyzing the Bundle Size
+export async function criarTrabalhoAcademico(trabalhoAcademico, tokenUsuario) {
+  try {
+    const response = await axios.post(`${API_BASE_URL}`, trabalhoAcademico, {
+      headers: {
+        Authorization: `Bearer ${tokenUsuario}`
+      }
+    });
+    return response.data;
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+  } catch (error) {
+    console.error("Erro ao criar trabalho:", error);
+    throw error;
+  }
+}
+```
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 👨‍💻 Desenvolvedores
+- [Ana Maria Alves Felix](https://github.com/anaMariaFelix)
+- [Emerson Andrey Fausto dos Santos](https://github.com/EmersonAndrey)
+- [Ismael Morais Ribeiro](https://github.com/IsmaelMoraisRibeiro20)
